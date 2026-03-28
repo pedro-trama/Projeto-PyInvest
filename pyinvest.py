@@ -9,6 +9,7 @@ Turma 01D - L12
 
 import math
 import locale
+from datetime import date
 
 
 def exibe_mensagem(): #exibe a mensagem do programa
@@ -32,6 +33,11 @@ def formatacao_monetaria(valor):
     formatado = locale.currency(valor, grouping=True)
     return formatado
 
+def data_atual(): # obtém a data atual
+    data = date.today()
+    data_atual = data.strftime("%d/%m/%Y")
+    return data_atual
+
 
 # função principal do programa
 def main():
@@ -46,7 +52,7 @@ def main():
     total = total_investido(capital_inicial, aporte, prazo_investimento)
     total_formatado = formatacao_monetaria(total) # valor total formatado
 
-
+    print(f"RELATÓRIO PYINVEST - {data_atual()}")
     print(f"Poupança: {valor_formatado}")
     print(f"Total investido: {total_formatado}")
 
