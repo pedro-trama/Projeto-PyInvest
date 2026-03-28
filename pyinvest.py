@@ -22,8 +22,10 @@ def total_investido(capital, aporte, meses):
 
 
 # calcula a poupança considerando rendimento fixo de 0,5% ao mês aplicando juros compostos
-def calcular_poupanca(capital, prazo_investimento):
-    poupanca = capital * math.pow((1 + 0.005), prazo_investimento)
+def calcular_poupanca(capital, aporte,  prazo):
+    valor_inicial = capital * math.pow((1 + 0.005), prazo)
+    valor_aporte = aporte * (math.pow((1 + 0.005), prazo) - 1) / 0.005
+    poupanca = valor_inicial + valor_aporte
     return poupanca
 
 
@@ -47,13 +49,13 @@ def main():
     prazo_investimento = int(input("Prazo (meses): "))
 
 
-    resultado = calcular_poupanca(capital_inicial, prazo_investimento)
-    valor_formatado = formatacao_monetaria(resultado) # valor da poupança formatado
+    poupanca = calcular_poupanca(capital_inicial, aporte, prazo_investimento)
+    poupanca_formatada = formatacao_monetaria(poupanca) # valor da poupança formatada
     total = total_investido(capital_inicial, aporte, prazo_investimento)
     total_formatado = formatacao_monetaria(total) # valor total formatado
 
     print(f"RELATÓRIO PYINVEST - {data_atual()}")
-    print(f"Poupança: {valor_formatado}")
+    print(f"Poupança: {poupanca_formatada}")
     print(f"Total investido: {total_formatado}")
 
 
