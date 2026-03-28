@@ -1,3 +1,12 @@
+'''
+Integrantes do Grupo:
+Lucas Notargiacomo Mustaro - RA: 10434914
+Matheus Otsuka Trovo de Carvalho - RA: 10776358
+Pedro Henrique Bettega Trama - RA: 10769933
+
+Turma 01D - L12
+'''
+
 import math
 import locale
 
