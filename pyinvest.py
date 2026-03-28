@@ -20,6 +20,11 @@ def exibe_mensagem(): #exibe a mensagem do programa
 def total_investido(capital, aporte, meses):
     return capital + (aporte * meses)
 
+# converte a taxa anual em taxa mensal composta
+def converter_taxa(porcentagem_cdi):
+    cdi_mensal = math.pow(1 + (porcentagem_cdi / 100), (1 / 12)) - 1
+    return cdi_mensal
+
 
 # calcula a poupança considerando rendimento fixo de 0,5% ao mês aplicando juros compostos
 def calcular_poupanca(capital, aporte,  prazo):
@@ -47,7 +52,9 @@ def main():
     capital_inicial = float(input("Capital Inicial (R$): "))
     aporte = int(input("Aporte Mensal (R$): "))
     prazo_investimento = int(input("Prazo (meses): "))
+    cdi_anual = int(input("CDI anual (%): "))
 
+    cdi_mensal = converter_taxa(cdi_anual)
 
     poupanca = calcular_poupanca(capital_inicial, aporte, prazo_investimento)
     poupanca_formatada = formatacao_monetaria(poupanca) # valor da poupança formatada
