@@ -33,7 +33,7 @@ def formatacao_monetaria(valor):
     return formatado
 
 
- # função principal do programa
+# função principal do programa
 def main():
     print(exibe_mensagem())
     capital_inicial = float(input("Capital Inicial (R$): "))
