@@ -152,6 +152,74 @@ def data_resgate(meses): # obtém a data de resgate considerando 30 dias por mê
     data_estimada_resgate = data_atual + timedelta(days=dias)
     return data_estimada_resgate
 
+# função que gera o gráfico em barras para cada modalidade 
+def gerar_barra(valor, valor_maximo):
+    tamanho_maximo = 50  # limite da barra
+
+    # evita divisão por zero
+    if valor_maximo == 0:
+        return ""
+
+    # regra de três (proporcionalidade)
+    proporcao = valor / valor_maximo
+    quantidade_blocos = int(proporcao * tamanho_maximo)
+
+    # garante pelo menos 1 bloco (opcional)
+    if quantidade_blocos == 0:
+        quantidade_blocos = 1
+
+    # multiplicação de string para gerar os gráficos
+    barra = "█" * quantidade_blocos
+
+    return barra
+
+# função que gera o relatório
+def gerar_relatorio(
+    data_hoje,
+    data_resgate,
+    total_formatado,
+    cdb, cdb_formatado,
+    lci, lci_formatada,
+    poupanca, poupanca_formatada,
+    fii_media, fii_formatado,
+    mediana_formatada,
+    desvio_formatado,
+    atingiu_meta,
+    melhor_opcao,
+    melhor_valor_formatado
+):
+    
+    # identifica o maior valor
+    maior_valor = max(cdb, lci, poupanca, fii_media)
+
+    print("=" * 50)
+    print(f"RELATÓRIO PYINVEST - {data_hoje}")
+    print(f"Data estimada de resgate: {data_resgate}")
+    print(f"Total investido: {total_formatado}")
+    print("-" * 50)
+
+    # CDB
+    print(f"CDB         : {cdb_formatado}")
+    print(f"Gráfico     : {gerar_barra(cdb, maior_valor)}")
+
+    # LCI
+    print(f"LCI/LCA     : {lci_formatada}")
+    print(f"Gráfico     : {gerar_barra(lci, maior_valor)}")
+
+    # Poupança
+    print(f"Poupança    : {poupanca_formatada}")
+    print(f"Gráfico     : {gerar_barra(poupanca, maior_valor)}")
+
+    # FII
+    print(f"FII (Média) : {fii_formatado}")
+    print(f"Gráfico     : {gerar_barra(fii_media, maior_valor)}")
+
+    print("-" * 50)
+    print(f"Estatísticas FII (Mediana): {mediana_formatada}")
+    print(f"Desvio Padrão FII: {desvio_formatado}")
+    print(f"Meta atingida? {'Sim' if atingiu_meta else 'Não'}")
+    print()
+    print(f"Melhor opção: {melhor_opcao} com {melhor_valor_formatado}")
 
 # função principal do programa
 def main():
@@ -165,7 +233,7 @@ def main():
     percentual_cdb = float(input("Percentual CDI na CDB (%): "))
     percentual_lci = float(input("Percentual CDI na LCI (%): "))
     rentabilidade_fii = float(input("Rentabilidade FII (%): "))
-    meta_financeira = float(input("Meta Financeira (R$): "))
+    meta = float(input("Meta Financeira (R$): "))
 
     # processamento dos dados
 
@@ -195,9 +263,41 @@ def main():
     # valor da poupança formatada 
     poupanca_formatada = formatacao_monetaria(valor_poupanca) 
 
-    # cálculo da fii (média estatística)
+    # cálculo da fii 
     simulacao = calcular_fii_simulacao(capital_inicial, aporte, prazo_investimento, rentabilidade_fii)
-    valor_fii_media = analisar_fii(simulacoes)
+    valores_fii = analisar_fii(simulacao)
+
+    # formatação da média estatística
+    media_formatada = formatacao_monetaria(valores_fii["media"])
+
+    # formatação da mediana
+    mediana_formatada = formatacao_monetaria(valores_fii["mediana"])
+
+    # desvio padrão formatado
+    desvio_padrao_formatado = formatacao_monetaria(valores_fii["desvio_padrao"])
+
+    def analisar_resultados(meta, cdb, lci, poupanca, fii_media):
+        if cdb >= meta or lci >= meta or poupanca >= meta or fii_media >= meta:
+            atingiu_meta =  True
+        else:
+            atingiu_meta = False
+
+        melhor_valor = max(cdb, lci, poupanca, fii_media)
+
+        if melhor_valor == cdb:
+            melhor_opcao = "CDB"
+        elif melhor_valor == lci:
+            melhor_opcao = "LCI/LCA"
+        elif melhor_valor == poupanca:
+            melhor_opcao = "Poupança"
+        else:
+            melhor_opcao = "FII (Média)"
+        
+        return atingiu_meta, melhor_opcao, melhor_valor
+    
+    atingiu_meta, melhor_opcao, melhor_valor = analisar_resultados(meta, valor_cdb, valor_lci, valor_poupanca, valores_fii["media"])
+
+    melhor_valor_formatado = formatacao_monetaria(melhor_valor)
 
     # saída dos dados
 
@@ -205,14 +305,19 @@ def main():
     if capital_inicial < 0 or aporte < 0 or prazo_investimento < 0:
         print("ERRO! Insira apenas valores positivos.") # exibe mensagem de erro em caso positivo
     else:
-        print("=" * 50)
-        print(f"RELATÓRIO PYINVEST - {data_atual()}")
-        print(f"Data estimada de resgate: {data_estimada_resgate.strftime("%d/%m/%Y")}")
-        print(f"Total investido: {total_formatado}")
-        print("-" * 50)
-        print(f"CDB: {cdb_formatado}")
-        print(f"LCI/LCA: {lci_formatada}")
-        print(f"Poupança: {poupanca_formatada}")
-    
-
+        gerar_relatorio(
+    data_atual(),
+    data_estimada_resgate.strftime("%d/%m/%Y"),
+    total_formatado,
+    valor_cdb, cdb_formatado,
+    valor_lci, lci_formatada,
+    valor_poupanca, poupanca_formatada,
+    valores_fii["media"], media_formatada,
+    mediana_formatada,
+    desvio_padrao_formatado,
+    atingiu_meta,
+    melhor_opcao,
+    melhor_valor_formatado
+)
+  
 main() # chamada para a função principal
