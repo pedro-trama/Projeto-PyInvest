@@ -275,14 +275,16 @@ def main():
     # desvio padrão formatado
     desvio_padrao_formatado = formatacao_monetaria(valores_fii["desvio_padrao"])
 
+    # função que analisa se a meta financeira foi atingida
     def analisar_resultados(meta, cdb, lci, poupanca, fii_media):
         if cdb >= meta or lci >= meta or poupanca >= meta or fii_media >= meta:
             atingiu_meta =  True
         else:
             atingiu_meta = False
 
-        melhor_valor = max(cdb, lci, poupanca, fii_media)
+        melhor_valor = max(cdb, lci, poupanca, fii_media) # verifica o maior valor 
 
+        # mostra qual dos valores é o maior
         if melhor_valor == cdb:
             melhor_opcao = "CDB"
         elif melhor_valor == lci:
